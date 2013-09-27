@@ -41,11 +41,19 @@ public class VerticleGauges {
 
     protected void register(Verticle verticle, MetricRegistry registry) {
 
-        final String config = verticle.getContainer().config().encodePrettily();
+        // Catch NoSuchMethodError for backwards compatibility
+        String config;
+        try {
+            config = verticle.getContainer().config().encodePrettily();
+        } catch (NoSuchMethodError e) {
+            config = verticle.getContainer().config().encode();
+        }
+
+        final String json = config;
         registry.register(name(verticle.getClass(), "config"), new Gauge<String>() {
             @Override
             public String getValue() {
-                return config;
+                return json;
             }
         });
 
