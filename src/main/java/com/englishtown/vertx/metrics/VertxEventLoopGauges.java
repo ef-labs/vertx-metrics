@@ -31,8 +31,6 @@ import org.vertx.java.core.Vertx;
 import org.vertx.java.core.impl.VertxInternal;
 import org.vertx.java.platform.Container;
 
-import javax.inject.Inject;
-
 import static com.codahale.metrics.MetricRegistry.name;
 
 /**
@@ -40,16 +38,11 @@ import static com.codahale.metrics.MetricRegistry.name;
  */
 public class VertxEventLoopGauges {
 
-    private final Vertx vertx;
-    private final Container container;
-
-    @Inject
-    public VertxEventLoopGauges(Vertx vertx, Container container) {
-        this.vertx = vertx;
-        this.container = container;
+    public VertxEventLoopGauges(Vertx vertx, Container container, MetricRegistry registry) {
+        register(vertx, container, registry);
     }
 
-    public void register(MetricRegistry metricRegistry) {
+    protected void register(Vertx vertx, Container container, MetricRegistry registry) {
 
         if (vertx instanceof VertxInternal) {
             VertxInternal vertxInternal = (VertxInternal) vertx;
@@ -59,7 +52,7 @@ public class VertxEventLoopGauges {
                 if (ee instanceof SingleThreadEventExecutor) {
                     final SingleThreadEventExecutor executor = (SingleThreadEventExecutor) ee;
                     try {
-                        metricRegistry.register(
+                        registry.register(
                                 name(VertxEventLoopGauges.class, "executor-" + count++, "pendingTasks"),
                                 new Gauge<Integer>() {
                                     @Override
@@ -68,7 +61,7 @@ public class VertxEventLoopGauges {
                                     }
                                 });
                     } catch (IllegalArgumentException e) {
-                        container.logger().warn(e.getMessage(), e);
+                        // Assume this is due to multiple instances
                     }
                 }
             }

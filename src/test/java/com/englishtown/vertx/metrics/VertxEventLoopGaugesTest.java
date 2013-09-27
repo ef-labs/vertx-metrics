@@ -46,7 +46,6 @@ import static org.mockito.Mockito.*;
 @RunWith(MockitoJUnitRunner.class)
 public class VertxEventLoopGaugesTest {
 
-    VertxEventLoopGauges vertxEventLoopGauges;
     NioEventLoopGroup eventLoopGroup = new NioEventLoopGroup(2);
 
     @Mock
@@ -62,13 +61,12 @@ public class VertxEventLoopGaugesTest {
     public void setUp() {
         when(vertx.getEventLoopGroup()).thenReturn(eventLoopGroup);
         when(container.logger()).thenReturn(logger);
-        vertxEventLoopGauges = new VertxEventLoopGauges(vertx, container);
     }
 
     @Test
     public void testRegister() throws Exception {
 
-        vertxEventLoopGauges.register(registry);
+        new VertxEventLoopGauges(vertx, container, registry);
         verify(registry, times(2)).register(anyString(), any(Metric.class));
 
     }
@@ -77,8 +75,7 @@ public class VertxEventLoopGaugesTest {
     public void testRegister_Not_VertxInternal() throws Exception {
 
         Vertx vertx = mock(Vertx.class);
-        vertxEventLoopGauges = new VertxEventLoopGauges(vertx, container);
-        vertxEventLoopGauges.register(registry);
+        new VertxEventLoopGauges(vertx, container, registry);
 
         verify(registry, never()).register(anyString(), any(Metric.class));
         verify(logger).warn(any());
@@ -89,9 +86,7 @@ public class VertxEventLoopGaugesTest {
     public void testRegister_Already_Registered() throws Exception {
 
         when(registry.register(anyString(), any(Metric.class))).thenThrow(new IllegalArgumentException());
-
-        vertxEventLoopGauges.register(registry);
-        verify(logger, times(2)).warn(any(), any(Throwable.class));
+        new VertxEventLoopGauges(vertx, container, registry);
 
     }
 

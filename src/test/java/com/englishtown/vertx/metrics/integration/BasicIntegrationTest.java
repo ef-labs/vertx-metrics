@@ -42,11 +42,10 @@ public class BasicIntegrationTest extends TestVerticle {
     @Test
     public void testVertxEventLoopGauges() throws Exception {
 
-        MetricRegistry metricRegistry = new MetricRegistry();
-        VertxEventLoopGauges gauges = new VertxEventLoopGauges(vertx, container);
-        gauges.register(metricRegistry);
+        MetricRegistry registry = new MetricRegistry();
+        VertxEventLoopGauges gauges = new VertxEventLoopGauges(vertx, container, registry);
 
-        SortedMap<String, Gauge> results = metricRegistry.getGauges();
+        SortedMap<String, Gauge> results = registry.getGauges();
 
         assertTrue(results.size() > 0);
         for (Map.Entry<String, Gauge> entry : results.entrySet()) {
