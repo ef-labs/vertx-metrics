@@ -36,6 +36,11 @@ public class Utils {
         } catch (Throwable t) {
             verticle.getContainer().logger().warn("Error creating VertxEventLoopGauges", t);
         }
+        try {
+            new VertxBackgroundPoolGauges(verticle.getVertx(), verticle.getContainer(), registry);
+        } catch (Throwable t) {
+            verticle.getContainer().logger().warn("Error creating VertxBackgroundPoolGauges", t);
+        }
 
         if (jmxReporter) {
             JmxReporter reporter = JmxReporter.forRegistry(registry).build();
