@@ -21,10 +21,14 @@ public class Utils {
     }
 
     public static JmxReporter create(Verticle verticle, MetricRegistry registry, Map<String, Object> values, JsonObject config) {
-        return create(verticle, registry, values, config.getBoolean("jmx-reporter", false));
+        return create(verticle, registry, values, config.getBoolean("jmx-reporter", false), config.getString("jmx-reporter-domain"));
     }
 
     public static JmxReporter create(Verticle verticle, MetricRegistry registry, Map<String, Object> values, boolean jmxReporter) {
+        return create(verticle, registry, values, jmxReporter, null);
+    }
+
+    public static JmxReporter create(Verticle verticle, MetricRegistry registry, Map<String, Object> values, boolean jmxReporter, String domain) {
 
         try {
             new VerticleGauges(verticle, registry, values);
@@ -42,8 +46,16 @@ public class Utils {
             verticle.getContainer().logger().warn("Error creating VertxBackgroundPoolGauges", t);
         }
 
+        if (domain == null || domain.isEmpty()) {
+            domain = "et.metrics";
+        }
+
         if (jmxReporter) {
-            JmxReporter reporter = JmxReporter.forRegistry(registry).build();
+            JmxReporter reporter = JmxReporter
+                    .forRegistry(registry)
+                    .inDomain(domain)
+                    .build();
+
             reporter.start();
             return reporter;
         }
