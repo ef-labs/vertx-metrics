@@ -55,7 +55,7 @@ public class VertxBackgroundPoolGauges {
                 final ThreadPoolExecutor executor = (ThreadPoolExecutor) executorService;
                 try {
                     registry.register(
-                            name(VertxBackgroundPoolGauges.class, "queue", "size"),
+                            name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "queue", "size"),
                             new Gauge<Integer>() {
                                 @Override
                                 public Integer getValue() {
@@ -67,7 +67,7 @@ public class VertxBackgroundPoolGauges {
                 }
                 try {
                     registry.register(
-                            name(VertxBackgroundPoolGauges.class, "size"),
+                            name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "size"),
                             new Gauge<Integer>() {
                                 @Override
                                 public Integer getValue() {
@@ -79,7 +79,7 @@ public class VertxBackgroundPoolGauges {
                 }
                 try {
                     registry.register(
-                            name(VertxBackgroundPoolGauges.class, "core", "size"),
+                            name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "core", "size"),
                             new Gauge<Integer>() {
                                 @Override
                                 public Integer getValue() {
@@ -91,7 +91,7 @@ public class VertxBackgroundPoolGauges {
                 }
                 try {
                     registry.register(
-                            name(VertxBackgroundPoolGauges.class, "max", "size"),
+                            name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "max", "size"),
                             new Gauge<Integer>() {
                                 @Override
                                 public Integer getValue() {

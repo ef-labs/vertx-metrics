@@ -12,6 +12,8 @@ import java.util.Map;
  */
 public class Utils {
 
+    public static final String DEFAULT_METRIC_PREFIX = "et.metrics";
+
     public static JmxReporter create(Verticle verticle, MetricRegistry registry, JsonObject config) {
         return create(verticle, registry, null, config);
     }

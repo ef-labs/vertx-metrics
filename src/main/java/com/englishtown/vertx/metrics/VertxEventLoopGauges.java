@@ -53,7 +53,7 @@ public class VertxEventLoopGauges {
                     final SingleThreadEventExecutor executor = (SingleThreadEventExecutor) ee;
                     try {
                         registry.register(
-                                name(VertxEventLoopGauges.class, "executor-" + count++, "pendingTasks"),
+                                name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "executor-" + count++, "pendingTasks"),
                                 new Gauge<Integer>() {
                                     @Override
                                     public Integer getValue() {
