@@ -6,6 +6,7 @@ import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.platform.Verticle;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Metric utilities to set up defaults for a Verticle
@@ -13,6 +14,10 @@ import java.util.Map;
 public class Utils {
 
     public static final String DEFAULT_METRIC_PREFIX = "et.metrics";
+
+    // A JVM unique ID for when multiple verticle instances are running
+    private static final AtomicInteger REPORTER_ID = new AtomicInteger(0);
+
 
     public static JmxReporter create(Verticle verticle, MetricRegistry registry, JsonObject config) {
         return create(verticle, registry, null, config);
@@ -51,6 +56,9 @@ public class Utils {
         if (domain == null || domain.isEmpty()) {
             domain = "et.metrics";
         }
+
+        // Guarantee unique name
+        domain += "-" + REPORTER_ID.incrementAndGet();
 
         if (jmxReporter) {
             JmxReporter reporter = JmxReporter
