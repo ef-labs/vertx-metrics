@@ -6,11 +6,18 @@ import org.vertx.java.core.json.JsonObject;
 import org.vertx.java.platform.Verticle;
 
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * Metric utilities to set up defaults for a Verticle
  */
 public class Utils {
+
+    public static final String DEFAULT_METRIC_PREFIX = "et.metrics";
+
+    // A JVM unique ID for when multiple verticle instances are running
+    private static final AtomicInteger REPORTER_ID = new AtomicInteger(0);
+
 
     public static JmxReporter create(Verticle verticle, MetricRegistry registry, JsonObject config) {
         return create(verticle, registry, null, config);
@@ -21,10 +28,14 @@ public class Utils {
     }
 
     public static JmxReporter create(Verticle verticle, MetricRegistry registry, Map<String, Object> values, JsonObject config) {
-        return create(verticle, registry, values, config.getBoolean("jmx-reporter", false));
+        return create(verticle, registry, values, config.getBoolean("jmx-reporter", false), config.getString("jmx-reporter-domain"));
     }
 
     public static JmxReporter create(Verticle verticle, MetricRegistry registry, Map<String, Object> values, boolean jmxReporter) {
+        return create(verticle, registry, values, jmxReporter, null);
+    }
+
+    public static JmxReporter create(Verticle verticle, MetricRegistry registry, Map<String, Object> values, boolean jmxReporter, String domain) {
 
         try {
             new VerticleGauges(verticle, registry, values);
@@ -36,9 +47,25 @@ public class Utils {
         } catch (Throwable t) {
             verticle.getContainer().logger().warn("Error creating VertxEventLoopGauges", t);
         }
+        try {
+            new VertxBackgroundPoolGauges(verticle.getVertx(), verticle.getContainer(), registry);
+        } catch (Throwable t) {
+            verticle.getContainer().logger().warn("Error creating VertxBackgroundPoolGauges", t);
+        }
+
+        if (domain == null || domain.isEmpty()) {
+            domain = "et.metrics";
+        }
+
+        // Guarantee unique name
+        domain += "-" + REPORTER_ID.incrementAndGet();
 
         if (jmxReporter) {
-            JmxReporter reporter = JmxReporter.forRegistry(registry).build();
+            JmxReporter reporter = JmxReporter
+                    .forRegistry(registry)
+                    .inDomain(domain)
+                    .build();
+
             reporter.start();
             return reporter;
         }

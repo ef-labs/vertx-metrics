@@ -27,12 +27,12 @@ import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.SharedMetricRegistries;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
+import javax.inject.Singleton;
+
 /**
  * HK2 binder for metrics
  */
 public class MetricsBinder extends AbstractBinder {
-
-    public static final String SHARED_REGISTRY_NAME = "com.englishtown~vertx-mod-metrics";
 
     /**
      * Implement to provide binding definitions using the exposed binding
@@ -41,9 +41,9 @@ public class MetricsBinder extends AbstractBinder {
     @Override
     protected void configure() {
 
-        // Bind the shared instance of MetricRegistry
-        MetricRegistry registry = SharedMetricRegistries.getOrCreate(SHARED_REGISTRY_NAME);
-        bind(registry).to(MetricRegistry.class);
+        // Bind a container singleton instance of MetricRegistry
+        // Do not use the static SharedMetricRegistries
+        bind(MetricRegistry.class).to(MetricRegistry.class).in(Singleton.class);
 
     }
 }
