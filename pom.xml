@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>vertx-mod-metrics</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <parent>
         <groupId>com.englishtown</groupId>
@@ -13,7 +13,7 @@
 
     <properties>
         <metrics.version>3.0.2</metrics.version>
-        <vertx.mod.hk2.version>1.6.0</vertx.mod.hk2.version>
+        <vertx.mod.hk2.version>1.7.0</vertx.mod.hk2.version>
         <mockito.version>1.9.5</mockito.version>
     </properties>
 
