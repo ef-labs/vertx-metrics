@@ -26,15 +26,15 @@ package com.englishtown.vertx.metrics;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricRegistry;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.vertx.core.Vertx;
+import io.vertx.core.impl.VertxInternal;
+import io.vertx.core.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.impl.VertxInternal;
-import org.vertx.java.core.logging.Logger;
-import org.vertx.java.platform.Container;
+
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -51,8 +51,6 @@ public class VertxEventLoopGaugesTest {
     @Mock
     VertxInternal vertx;
     @Mock
-    Container container;
-    @Mock
     Logger logger;
     @Mock
     MetricRegistry registry;
@@ -60,13 +58,14 @@ public class VertxEventLoopGaugesTest {
     @Before
     public void setUp() {
         when(vertx.getEventLoopGroup()).thenReturn(eventLoopGroup);
-        when(container.logger()).thenReturn(logger);
+        //TODO Migration:
+        //when(container.logger()).thenReturn(logger);
     }
 
     @Test
     public void testRegister() throws Exception {
 
-        new VertxEventLoopGauges(vertx, container, registry);
+        new VertxEventLoopGauges(vertx, registry);
         verify(registry, times(2)).register(anyString(), any(Metric.class));
 
     }
@@ -75,7 +74,7 @@ public class VertxEventLoopGaugesTest {
     public void testRegister_Not_VertxInternal() throws Exception {
 
         Vertx vertx = mock(Vertx.class);
-        new VertxEventLoopGauges(vertx, container, registry);
+        new VertxEventLoopGauges(vertx, registry);
 
         verify(registry, never()).register(anyString(), any(Metric.class));
         verify(logger).warn(any());
@@ -86,7 +85,7 @@ public class VertxEventLoopGaugesTest {
     public void testRegister_Already_Registered() throws Exception {
 
         when(registry.register(anyString(), any(Metric.class))).thenThrow(new IllegalArgumentException());
-        new VertxEventLoopGauges(vertx, container, registry);
+        new VertxEventLoopGauges(vertx, registry);
 
     }
 

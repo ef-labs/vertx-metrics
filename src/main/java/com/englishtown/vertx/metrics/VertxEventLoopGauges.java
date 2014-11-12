@@ -27,9 +27,10 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
 import io.netty.util.concurrent.EventExecutor;
 import io.netty.util.concurrent.SingleThreadEventExecutor;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.impl.VertxInternal;
-import org.vertx.java.platform.Container;
+import io.vertx.core.Vertx;
+import io.vertx.core.impl.VertxInternal;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.impl.LoggerFactory;
 
 import static com.codahale.metrics.MetricRegistry.name;
 
@@ -38,11 +39,13 @@ import static com.codahale.metrics.MetricRegistry.name;
  */
 public class VertxEventLoopGauges {
 
-    public VertxEventLoopGauges(Vertx vertx, Container container, MetricRegistry registry) {
-        register(vertx, container, registry);
+    private static final Logger log = LoggerFactory.getLogger(VertxEventLoopGauges.class);
+
+    public VertxEventLoopGauges(Vertx vertx, MetricRegistry registry) {
+        register(vertx, registry);
     }
 
-    protected void register(Vertx vertx, Container container, MetricRegistry registry) {
+    protected void register(Vertx vertx, MetricRegistry registry) {
 
         if (vertx instanceof VertxInternal) {
             VertxInternal vertxInternal = (VertxInternal) vertx;
@@ -67,7 +70,7 @@ public class VertxEventLoopGauges {
             }
 
         } else {
-            container.logger().warn("Vertx is not an instance of VertxInternal, cannot access event loops.");
+            log.warn("Vertx is not an instance of VertxInternal, cannot access event loops.");
         }
 
     }

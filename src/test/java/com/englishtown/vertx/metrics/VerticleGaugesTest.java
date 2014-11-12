@@ -2,15 +2,14 @@ package com.englishtown.vertx.metrics;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
+import io.vertx.core.Verticle;
+import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.java.platform.Container;
-import org.vertx.java.platform.Verticle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,17 +31,14 @@ public class VerticleGaugesTest {
     @Mock
     Vertx vertx;
     @Mock
-    Container container;
-    @Mock
     Verticle verticle;
     @Mock
     MetricRegistry registry;
 
     @Before
     public void setUp() throws Exception {
-        when(container.config()).thenReturn(config);
+        //when(container.config()).thenReturn(config);
         when(verticle.getVertx()).thenReturn(vertx);
-        when(verticle.getContainer()).thenReturn(container);
     }
 
     @Test

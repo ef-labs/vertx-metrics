@@ -2,7 +2,7 @@ package com.englishtown.vertx.metrics;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
-import org.vertx.java.platform.Verticle;
+import io.vertx.core.Verticle;
 
 import java.util.Map;
 
@@ -61,9 +61,9 @@ public class VerticleGauges {
         // Catch NoSuchMethodError for backwards compatibility
         String config;
         try {
-            config = verticle.getContainer().config().encodePrettily();
+            config = verticle.getVertx().context().config().encodePrettily();
         } catch (NoSuchMethodError e) {
-            config = verticle.getContainer().config().encode();
+            config = verticle.getVertx().context().config().encode();
         }
 
         final String json = config;
@@ -74,7 +74,7 @@ public class VerticleGauges {
             }
         });
 
-        final Boolean eventLoop = verticle.getVertx().isEventLoop();
+        final Boolean eventLoop = verticle.getVertx().context().isEventLoopContext();
         registry.register(name(prefix, "event-loop"), new Gauge<Boolean>() {
             @Override
             public Boolean getValue() {
@@ -82,7 +82,7 @@ public class VerticleGauges {
             }
         });
 
-        final Boolean worker = verticle.getVertx().isWorker();
+        final Boolean worker = verticle.getVertx().context().isWorker();
         registry.register(name(prefix, "worker"), new Gauge<Boolean>() {
             @Override
             public Boolean getValue() {
