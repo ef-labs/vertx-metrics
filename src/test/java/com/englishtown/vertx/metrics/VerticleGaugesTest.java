@@ -2,6 +2,7 @@ package com.englishtown.vertx.metrics;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
+import io.vertx.core.Context;
 import io.vertx.core.Verticle;
 import io.vertx.core.Vertx;
 import io.vertx.core.json.JsonObject;
@@ -16,9 +17,7 @@ import java.util.Map;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * Unit tests for {@link VerticleGauges}
@@ -31,14 +30,17 @@ public class VerticleGaugesTest {
     @Mock
     Vertx vertx;
     @Mock
+    Context context;
+    @Mock
     Verticle verticle;
     @Mock
     MetricRegistry registry;
 
     @Before
     public void setUp() throws Exception {
-        //when(container.config()).thenReturn(config);
+        when(context.config()).thenReturn(config);
         when(verticle.getVertx()).thenReturn(vertx);
+        when(vertx.context()).thenReturn(context);
     }
 
     @Test

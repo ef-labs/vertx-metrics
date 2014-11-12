@@ -28,13 +28,11 @@ import com.codahale.metrics.MetricRegistry;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.vertx.core.Vertx;
 import io.vertx.core.impl.VertxInternal;
-import io.vertx.core.logging.Logger;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -51,15 +49,11 @@ public class VertxEventLoopGaugesTest {
     @Mock
     VertxInternal vertx;
     @Mock
-    Logger logger;
-    @Mock
     MetricRegistry registry;
 
     @Before
     public void setUp() {
         when(vertx.getEventLoopGroup()).thenReturn(eventLoopGroup);
-        //TODO Migration:
-        //when(container.logger()).thenReturn(logger);
     }
 
     @Test
@@ -77,7 +71,6 @@ public class VertxEventLoopGaugesTest {
         new VertxEventLoopGauges(vertx, registry);
 
         verify(registry, never()).register(anyString(), any(Metric.class));
-        verify(logger).warn(any());
 
     }
 

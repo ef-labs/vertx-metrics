@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Utils {
 
-    private static Logger log = LoggerFactory.getLogger(Utils.class);
+    private static final Logger logger = LoggerFactory.getLogger(Utils.class);
 
     public static final String DEFAULT_METRIC_PREFIX = "et.metrics";
 
@@ -44,17 +44,17 @@ public class Utils {
         try {
             new VerticleGauges(verticle, registry, values);
         } catch (Throwable t) {
-            log.warn("Error creating VerticleGauges", t);
+            logger.warn("Error creating VerticleGauges", t);
         }
         try {
             new VertxEventLoopGauges(verticle.getVertx(), registry);
         } catch (Throwable t) {
-            log.warn("Error creating VertxEventLoopGauges", t);
+            logger.warn("Error creating VertxEventLoopGauges", t);
         }
         try {
-            new VertxBackgroundPoolGauges(verticle.getVertx(), registry);
+            new VertxWorkerPoolGauges(verticle.getVertx(), registry);
         } catch (Throwable t) {
-            log.warn("Error creating VertxBackgroundPoolGauges", t);
+            logger.warn("Error creating VertxBackgroundPoolGauges", t);
         }
 
         if (domain == null || domain.isEmpty()) {

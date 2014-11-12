@@ -38,15 +38,15 @@ import static com.codahale.metrics.MetricRegistry.name;
 /**
  * Provides gauges for vert.x background pool worker threads
  */
-public class VertxBackgroundPoolGauges {
+public class VertxWorkerPoolGauges {
 
-    private static final Logger log = LoggerFactory.getLogger(VertxBackgroundPoolGauges.class);
+    private static final Logger logger = LoggerFactory.getLogger(VertxWorkerPoolGauges.class);
 
-    public VertxBackgroundPoolGauges(Vertx vertx, MetricRegistry registry) {
+    public VertxWorkerPoolGauges(Vertx vertx, MetricRegistry registry) {
         register(vertx, registry);
     }
 
-    protected void register(Vertx vertx,  MetricRegistry registry) {
+    protected void register(Vertx vertx, MetricRegistry registry) {
 
         if (vertx instanceof VertxInternal) {
             VertxInternal vertxInternal = (VertxInternal) vertx;
@@ -57,55 +57,35 @@ public class VertxBackgroundPoolGauges {
                 try {
                     registry.register(
                             name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "queue", "size"),
-                            new Gauge<Integer>() {
-                                @Override
-                                public Integer getValue() {
-                                    return executor.getQueue().size();
-                                }
-                            });
+                            (Gauge<Integer>) () -> executor.getQueue().size());
                 } catch (IllegalArgumentException e) {
                     // Assume this is due to multiple instances
                 }
                 try {
                     registry.register(
                             name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "size"),
-                            new Gauge<Integer>() {
-                                @Override
-                                public Integer getValue() {
-                                    return executor.getPoolSize();
-                                }
-                            });
+                            (Gauge<Integer>) () -> executor.getPoolSize());
                 } catch (IllegalArgumentException e) {
                     // Assume this is due to multiple instances
                 }
                 try {
                     registry.register(
                             name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "core", "size"),
-                            new Gauge<Integer>() {
-                                @Override
-                                public Integer getValue() {
-                                    return executor.getCorePoolSize();
-                                }
-                            });
+                            (Gauge<Integer>) () -> executor.getCorePoolSize());
                 } catch (IllegalArgumentException e) {
                     // Assume this is due to multiple instances
                 }
                 try {
                     registry.register(
                             name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "max", "size"),
-                            new Gauge<Integer>() {
-                                @Override
-                                public Integer getValue() {
-                                    return executor.getMaximumPoolSize();
-                                }
-                            });
+                            (Gauge<Integer>) () -> executor.getMaximumPoolSize());
                 } catch (IllegalArgumentException e) {
                     // Assume this is due to multiple instances
                 }
             }
 
         } else {
-            log.warn("Vertx is not an instance of VertxInternal, cannot access worker background pool.");
+            logger.warn("Vertx is not an instance of VertxInternal, cannot access worker background pool.");
         }
 
     }

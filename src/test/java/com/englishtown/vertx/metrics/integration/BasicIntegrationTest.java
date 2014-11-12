@@ -24,9 +24,10 @@
 package com.englishtown.vertx.metrics.integration;
 
 import com.codahale.metrics.Gauge;
-import com.codahale.metrics.Metric;
-import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
+import com.englishtown.vertx.metrics.Utils;
+import io.vertx.core.AbstractVerticle;
+import io.vertx.core.Verticle;
 import io.vertx.test.core.VertxTestBase;
 import org.junit.Test;
 
@@ -42,17 +43,15 @@ public class BasicIntegrationTest extends VertxTestBase {
     public void testVertxEventLoopGauges() throws Exception {
 
         MetricRegistry registry = new MetricRegistry();
-        //TODO Migration: Mock or create test verticle
-        //Utils.create(new AbstractVerticle(), registry, false);
+        Verticle verticle = new AbstractVerticle() {
+        };
+        verticle.init(vertx, vertx.context());
 
-        SortedMap<String, Gauge> results = registry.getGauges(new MetricFilter() {
-            @Override
-            public boolean matches(String name, Metric metric) {
-                return name.contains("VertxEventLoopGauges");
-            }
-        });
+        Utils.create(verticle, registry, false);
 
+        SortedMap<String, Gauge> results = registry.getGauges((name, metric) -> name.contains("VertxEventLoopGauges"));
         assertTrue(results.size() > 0);
+
         for (Map.Entry<String, Gauge> entry : results.entrySet()) {
             assertEquals(0, entry.getValue().getValue());
         }

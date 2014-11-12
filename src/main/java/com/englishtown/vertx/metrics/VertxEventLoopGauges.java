@@ -39,7 +39,7 @@ import static com.codahale.metrics.MetricRegistry.name;
  */
 public class VertxEventLoopGauges {
 
-    private static final Logger log = LoggerFactory.getLogger(VertxEventLoopGauges.class);
+    private static final Logger logger = LoggerFactory.getLogger(VertxEventLoopGauges.class);
 
     public VertxEventLoopGauges(Vertx vertx, MetricRegistry registry) {
         register(vertx, registry);
@@ -57,12 +57,7 @@ public class VertxEventLoopGauges {
                     try {
                         registry.register(
                                 name(Utils.DEFAULT_METRIC_PREFIX, this.getClass().getSimpleName(), "executor-" + count++, "pendingTasks"),
-                                new Gauge<Integer>() {
-                                    @Override
-                                    public Integer getValue() {
-                                        return executor.pendingTasks();
-                                    }
-                                });
+                                (Gauge<Integer>) () -> executor.pendingTasks());
                     } catch (IllegalArgumentException e) {
                         // Assume this is due to multiple instances
                     }
@@ -70,7 +65,7 @@ public class VertxEventLoopGauges {
             }
 
         } else {
-            log.warn("Vertx is not an instance of VertxInternal, cannot access event loops.");
+            logger.warn("Vertx is not an instance of VertxInternal, cannot access event loops.");
         }
 
     }

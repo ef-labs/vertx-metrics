@@ -67,28 +67,13 @@ public class VerticleGauges {
         }
 
         final String json = config;
-        registry.register(name(prefix, "config"), new Gauge<String>() {
-            @Override
-            public String getValue() {
-                return json;
-            }
-        });
+        registry.register(name(prefix, "config"), (Gauge<String>) () -> json);
 
         final Boolean eventLoop = verticle.getVertx().context().isEventLoopContext();
-        registry.register(name(prefix, "event-loop"), new Gauge<Boolean>() {
-            @Override
-            public Boolean getValue() {
-                return eventLoop;
-            }
-        });
+        registry.register(name(prefix, "event-loop"), (Gauge<Boolean>) () -> eventLoop);
 
         final Boolean worker = verticle.getVertx().context().isWorker();
-        registry.register(name(prefix, "worker"), new Gauge<Boolean>() {
-            @Override
-            public Boolean getValue() {
-                return worker;
-            }
-        });
+        registry.register(name(prefix, "worker"), (Gauge<Boolean>) () -> worker);
 
     }
 
@@ -99,12 +84,7 @@ public class VerticleGauges {
         }
 
         for (final Map.Entry<String, Object> entry : values.entrySet()) {
-            registry.register(name(prefix, entry.getKey()), new Gauge<Object>() {
-                @Override
-                public Object getValue() {
-                    return entry.getValue();
-                }
-            });
+            registry.register(name(prefix, entry.getKey()), (Gauge<Object>) () -> entry.getValue());
         }
 
     }
