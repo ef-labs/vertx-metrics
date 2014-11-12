@@ -2,8 +2,10 @@ package com.englishtown.vertx.metrics;
 
 import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
-import org.vertx.java.core.json.JsonObject;
-import org.vertx.java.platform.Verticle;
+import io.vertx.core.Verticle;
+import io.vertx.core.json.JsonObject;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.impl.LoggerFactory;
 
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -12,6 +14,8 @@ import java.util.concurrent.atomic.AtomicInteger;
  * Metric utilities to set up defaults for a Verticle
  */
 public class Utils {
+
+    private static Logger log = LoggerFactory.getLogger(Utils.class);
 
     public static final String DEFAULT_METRIC_PREFIX = "et.metrics";
 
@@ -40,17 +44,17 @@ public class Utils {
         try {
             new VerticleGauges(verticle, registry, values);
         } catch (Throwable t) {
-            verticle.getContainer().logger().warn("Error creating VerticleGauges", t);
+            log.warn("Error creating VerticleGauges", t);
         }
         try {
-            new VertxEventLoopGauges(verticle.getVertx(), verticle.getContainer(), registry);
+            new VertxEventLoopGauges(verticle.getVertx(), registry);
         } catch (Throwable t) {
-            verticle.getContainer().logger().warn("Error creating VertxEventLoopGauges", t);
+            log.warn("Error creating VertxEventLoopGauges", t);
         }
         try {
-            new VertxBackgroundPoolGauges(verticle.getVertx(), verticle.getContainer(), registry);
+            new VertxBackgroundPoolGauges(verticle.getVertx(), registry);
         } catch (Throwable t) {
-            verticle.getContainer().logger().warn("Error creating VertxBackgroundPoolGauges", t);
+            log.warn("Error creating VertxBackgroundPoolGauges", t);
         }
 
         if (domain == null || domain.isEmpty()) {

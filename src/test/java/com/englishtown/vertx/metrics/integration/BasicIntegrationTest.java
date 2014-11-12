@@ -27,26 +27,23 @@ import com.codahale.metrics.Gauge;
 import com.codahale.metrics.Metric;
 import com.codahale.metrics.MetricFilter;
 import com.codahale.metrics.MetricRegistry;
-import com.englishtown.vertx.metrics.Utils;
-import com.englishtown.vertx.metrics.VertxEventLoopGauges;
+import io.vertx.test.core.VertxTestBase;
 import org.junit.Test;
-import org.vertx.testtools.TestVerticle;
 
 import java.util.Map;
 import java.util.SortedMap;
 
-import static org.vertx.testtools.VertxAssert.*;
-
 /**
  * Metrics integration tests
  */
-public class BasicIntegrationTest extends TestVerticle {
+public class BasicIntegrationTest extends VertxTestBase {
 
     @Test
     public void testVertxEventLoopGauges() throws Exception {
 
         MetricRegistry registry = new MetricRegistry();
-        Utils.create(this, registry, false);
+        //TODO Migration: Mock or create test verticle
+        //Utils.create(new AbstractVerticle(), registry, false);
 
         SortedMap<String, Gauge> results = registry.getGauges(new MetricFilter() {
             @Override

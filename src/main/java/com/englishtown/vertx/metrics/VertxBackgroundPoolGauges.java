@@ -25,11 +25,10 @@ package com.englishtown.vertx.metrics;
 
 import com.codahale.metrics.Gauge;
 import com.codahale.metrics.MetricRegistry;
-import io.netty.util.concurrent.EventExecutor;
-import io.netty.util.concurrent.SingleThreadEventExecutor;
-import org.vertx.java.core.Vertx;
-import org.vertx.java.core.impl.VertxInternal;
-import org.vertx.java.platform.Container;
+import io.vertx.core.Vertx;
+import io.vertx.core.impl.VertxInternal;
+import io.vertx.core.logging.Logger;
+import io.vertx.core.logging.impl.LoggerFactory;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadPoolExecutor;
@@ -41,15 +40,17 @@ import static com.codahale.metrics.MetricRegistry.name;
  */
 public class VertxBackgroundPoolGauges {
 
-    public VertxBackgroundPoolGauges(Vertx vertx, Container container, MetricRegistry registry) {
-        register(vertx, container, registry);
+    private static final Logger log = LoggerFactory.getLogger(VertxBackgroundPoolGauges.class);
+
+    public VertxBackgroundPoolGauges(Vertx vertx, MetricRegistry registry) {
+        register(vertx, registry);
     }
 
-    protected void register(Vertx vertx, Container container, MetricRegistry registry) {
+    protected void register(Vertx vertx,  MetricRegistry registry) {
 
         if (vertx instanceof VertxInternal) {
             VertxInternal vertxInternal = (VertxInternal) vertx;
-            ExecutorService executorService = vertxInternal.getBackgroundPool();
+            ExecutorService executorService = vertxInternal.getWorkerPool();
 
             if (executorService instanceof ThreadPoolExecutor) {
                 final ThreadPoolExecutor executor = (ThreadPoolExecutor) executorService;
@@ -104,7 +105,7 @@ public class VertxBackgroundPoolGauges {
             }
 
         } else {
-            container.logger().warn("Vertx is not an instance of VertxInternal, cannot access worker background pool.");
+            log.warn("Vertx is not an instance of VertxInternal, cannot access worker background pool.");
         }
 
     }
