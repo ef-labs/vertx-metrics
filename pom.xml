@@ -4,45 +4,18 @@
     <modelVersion>4.0.0</modelVersion>
 
     <artifactId>vertx-metrics</artifactId>
+    <packaging>pom</packaging>
     <version>2.0.0-SNAPSHOT</version>
+
+    <modules>
+        <module>ext-metrics</module>
+    </modules>
 
     <parent>
         <groupId>com.englishtown.vertx</groupId>
         <artifactId>oss-parent-vertx</artifactId>
         <version>2.0.0-SNAPSHOT</version>
     </parent>
-
-    <properties>
-        <metrics.version>3.1.0</metrics.version>
-        <vertx.ext.hk2.version>2.0.0-SNAPSHOT</vertx.ext.hk2.version>
-    </properties>
-
-    <dependencies>
-        <dependency>
-            <groupId>io.dropwizard.metrics</groupId>
-            <artifactId>metrics-core</artifactId>
-            <version>${metrics.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>com.englishtown.vertx</groupId>
-            <artifactId>ext-hk2</artifactId>
-            <version>${vertx.ext.hk2.version}</version>
-            <scope>provided</scope>
-        </dependency>
-
-        <!--Test dependencies-->
-        <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-    </dependencies>
 
     <distributionManagement>
         <site>
